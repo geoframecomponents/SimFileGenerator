@@ -1,0 +1,392 @@
+import static oms3.SimBuilder.instance as OMS3
+def home = oms_prj
+def startDate= "1994-01-01 00:00"
+def endDate= "1998-12-31 23:00"
+def ID=3
+
+OMS3.sim (name: "3") {
+
+resource "$oms_prj/lib"
+    
+ model(while:"reader_data_rain.doProcess") {
+ //model() {
+   components {
+     
+        "reader_data_ET"       "org.jgrasstools.gears.io.timedependent.OmsTimeSeriesIteratorReader"
+        "reader_data_LAI"      "org.jgrasstools.gears.io.timedependent.OmsTimeSeriesIteratorReader"
+        
+        "reader_data_rain"                   "org.jgrasstools.gears.io.timedependent.OmsTimeSeriesIteratorReader"
+        "reader_data_snow"                   "org.jgrasstools.gears.io.timedependent.OmsTimeSeriesIteratorReader"
+        "reader_data_SWRB"                   "org.jgrasstools.gears.io.timedependent.OmsTimeSeriesIteratorReader"
+        "reader_data_temp"                     "org.jgrasstools.gears.io.timedependent.OmsTimeSeriesIteratorReader"
+        "reader_dem"                        "org.jgrasstools.gears.io.rasterreader.OmsRasterReader"
+        "reader_sky"                         "org.jgrasstools.gears.io.rasterreader.OmsRasterReader"
+        "snow"                              "snowMeltingPointCase.SnowMeltingPointCase"
+        "vreader_station"                      "org.jgrasstools.gears.io.shapefile.OmsShapefileFeatureReader"
+        
+        "waterBudgetRZ"              "rootZone.WaterBudgetRootZone" 
+        "waterBudgetCanopyIN"            "canopyIN.WaterBudgetCanopyIN" 
+        "waterBudgetCanopyOUT"            "canopyOUT.WaterBudgetCanopyOUT"         
+         "waterBudgetRunoff"		     "runoff.WaterBudgetRunoff"
+        "reader_width"         "org.jgrasstools.gears.io.rasterreader.OmsRasterReader"
+        "reader_topIndex"      "org.jgrasstools.gears.io.rasterreader.OmsRasterReader"
+        
+        "waterBudgetGW"              "groundWater.WaterBudgetGroundWater"
+        
+        "sum"					"sumSeries.SumSeries"
+        "s"						"sumSeries.SumNodes"
+        "to"					"it.blogspot.geoframe.treeUtils.TreeOut"
+        
+        
+		"writer_Melting"			"org.jgrasstools.gears.io.timedependent.OmsTimeSeriesIteratorWriter"
+		
+		"writer_InputCanopyOut"		"org.jgrasstools.gears.io.timedependent.OmsTimeSeriesIteratorWriter"
+		"writer_InputRoot"			"org.jgrasstools.gears.io.timedependent.OmsTimeSeriesIteratorWriter"
+		"writer_InputRunoff"		"org.jgrasstools.gears.io.timedependent.OmsTimeSeriesIteratorWriter"
+		
+		"writer_Qgw"			"org.jgrasstools.gears.io.timedependent.OmsTimeSeriesIteratorWriter"
+		"writer_Qgw_mm"			"org.jgrasstools.gears.io.timedependent.OmsTimeSeriesIteratorWriter"
+		"writer_Qro"			"org.jgrasstools.gears.io.timedependent.OmsTimeSeriesIteratorWriter"
+		"writer_Qro_mm"			"org.jgrasstools.gears.io.timedependent.OmsTimeSeriesIteratorWriter"
+		"writer_Qc"			   "org.jgrasstools.gears.io.timedependent.OmsTimeSeriesIteratorWriter"
+		"writer_Throughfall"   "org.jgrasstools.gears.io.timedependent.OmsTimeSeriesIteratorWriter"
+		"writer_Qrz"			"org.jgrasstools.gears.io.timedependent.OmsTimeSeriesIteratorWriter"
+        
+		"writer_Sgw"			"org.jgrasstools.gears.io.timedependent.OmsTimeSeriesIteratorWriter"
+		"writer_Sro"			"org.jgrasstools.gears.io.timedependent.OmsTimeSeriesIteratorWriter"
+		"writer_Srz"			"org.jgrasstools.gears.io.timedependent.OmsTimeSeriesIteratorWriter"
+		"writer_Sc"			    "org.jgrasstools.gears.io.timedependent.OmsTimeSeriesIteratorWriter"
+		"writer_Sc_in"			    "org.jgrasstools.gears.io.timedependent.OmsTimeSeriesIteratorWriter"
+		
+		"writer_ETc"			"org.jgrasstools.gears.io.timedependent.OmsTimeSeriesIteratorWriter"
+		"writer_ETc_in"			"org.jgrasstools.gears.io.timedependent.OmsTimeSeriesIteratorWriter"
+		"writer_ETro"			"org.jgrasstools.gears.io.timedependent.OmsTimeSeriesIteratorWriter"
+		"writer_ETrz"			"org.jgrasstools.gears.io.timedependent.OmsTimeSeriesIteratorWriter"
+		
+		"writer_uptake"			"org.jgrasstools.gears.io.timedependent.OmsTimeSeriesIteratorWriter"
+        
+   }
+
+  
+   parameter{
+   
+   
+        "reader_data_rain.file"             "${home}/data/Posina/${ID}/rain_${ID}.csv"  
+        "reader_data_rain.idfield"          "ID"  
+        "reader_data_rain.tStart"           "${startDate}"
+        "reader_data_rain.tEnd"             "${endDate}"
+        "reader_data_rain.tTimestep"          60
+        "reader_data_rain.fileNovalue"      "-9999"
+        
+        "reader_data_snow.file"             "${home}/data/Posina/${ID}/snow_${ID}.csv" 
+        "reader_data_snow.idfield"          "ID"  
+         "reader_data_snow.tStart"           "${startDate}"
+        "reader_data_snow.tEnd"             "${endDate}"
+         "reader_data_snow.tTimestep"          60
+         "reader_data_snow.fileNovalue"      "-9999"
+        
+         "reader_data_SWRB.file"             "${home}/data/Posina/${ID}/diretta_${ID}.csv"
+         "reader_data_SWRB.idfield"          "ID"  
+         "reader_data_SWRB.tStart"           "${startDate}"
+          "reader_data_SWRB.tEnd"             "${endDate}"
+         "reader_data_SWRB.tTimestep"         60
+         "reader_data_SWRB.fileNovalue"      "-9999"
+        
+		  "reader_data_temp.file"             "${home}/data/Posina/${ID}/airT_${ID}.csv"
+         "reader_data_temp.idfield"          "ID"  
+        "reader_data_temp.tStart"           "${startDate}"
+        "reader_data_temp.tEnd"             "${endDate}"
+         "reader_data_temp.tTimestep"         60
+        "reader_data_temp.fileNovalue"      "-9999"
+
+        "reader_dem.file"                      "${home}/data/Posina/${ID}/dem_${ID}.asc"
+         "reader_sky.file"                      "${home}/data/Posina/${ID}/sky_${ID}.asc"
+         "vreader_station.file"                 "${home}/data/Posina/${ID}/centroids_netnum_${ID}.shp"
+       
+         "snow.fStationsid"                     "netnum"
+         "snow.model"                           "Hock"
+         "snow.tStartDate"                      "${startDate}"
+         "snow.combinedMeltingFactor"         0.596265
+         "snow.freezingFactor"                0.083070
+         "snow.alfa_l"                        0.329205
+         "snow.radiationFactor"               0.000060
+         "snow.meltingTemperature"            1.94
+        
+
+
+
+
+        
+        "reader_data_ET.file"            	"${home}/data/Posina/${ID}/etp_${ID}.csv"
+        "reader_data_ET.idfield"          	"ID"  
+        "reader_data_ET.tStart"           	"${startDate}"
+        "reader_data_ET.tEnd"             	"${endDate}"
+        "reader_data_ET.tTimestep"          60
+        "reader_data_ET.fileNovalue"       	"-9999"
+        
+        
+        "reader_data_LAI.file"            	"${home}/data/Posina/${ID}/LAI_${ID}.csv"
+        "reader_data_LAI.idfield"           "ID"  
+        "reader_data_LAI.tStart"            "${startDate}"
+        "reader_data_LAI.tEnd"              "${endDate}"
+        "reader_data_LAI.tTimestep"          60
+        "reader_data_LAI.fileNovalue"       "-9999"
+        
+        
+        "waterBudgetCanopyIN.solver_model"  	 "dp853"
+	    "waterBudgetCanopyIN.ET_model"      	 "AET"
+	    "waterBudgetCanopyIN.kc_canopy_in"	  	 0.008672
+	    
+	    "waterBudgetCanopyOUT.solver_model"  	 "dp853"
+	    "waterBudgetCanopyOUT.ET_model"      	 "AET"
+	     "waterBudgetCanopyOUT.kc_canopy_out"	  0.006172
+	     "waterBudgetCanopyOUT.p"	  			  0.8
+	     "waterBudgetCanopyOUT.IntialConditionStorage" 0.0
+
+        
+
+		"waterBudgetRZ.solver_model"		"dp853"
+	    "waterBudgetRZ.UpTake_model"		"NonLinearReservoir"
+        "waterBudgetRZ.ET_model"			"AET"
+		"waterBudgetRZ.a_uptake"			22.249853
+		"waterBudgetRZ.b_uptake"			1
+		"waterBudgetRZ.s_RootZoneMax"       0.92735
+	    "waterBudgetRZ.pB"					3.417669
+	    "waterBudgetRZ.pCmax"				27.031872
+	    "waterBudgetRZ.Pmax"				818.445940
+	    "waterBudgetRZ.connectTOcanopy"		true
+
+	    
+	    
+	     "reader_width.file" 				"${home}/data/Posina/${ID}/rescaled_${ID}.asc"
+         "reader_topIndex.file" 			"${home}/data/Posina/${ID}/top_${ID}.asc"
+        
+
+		"waterBudgetRunoff.solver_model"	"dp853"
+		"waterBudgetRunoff.ET_model"		"AET"
+		"waterBudgetRunoff.pCelerity"		 2		
+		"waterBudgetRunoff.pSat"      		 22.495108	
+		"waterBudgetRunoff.inTimestep"      60	
+		"waterBudgetRunoff.tStartDate"     "${startDate}"
+	    "waterBudgetRunoff.tEndDate"	   "${endDate}"
+		"waterBudgetRunoff.ID"             "${ID}"
+		"waterBudgetRunoff.s_RunoffMax"    0.0085193
+		
+		
+	    "waterBudgetGW.solver_model"		"dp853"
+		"waterBudgetGW.Q_model"				"NonLinearReservoir"
+		"waterBudgetGW.a"					85.832043
+		"waterBudgetGW.b"					1.010790
+		"waterBudgetGW.A"					3.79
+		
+		//"s.id"								${ID}
+
+
+		"writer_Melting.file"		"${home}/output/Posina_tree/Melting_${ID}.csv"
+		"writer_Melting.tStart" "${startDate}"
+        "writer_Melting.tTimestep" 60
+        "writer_Melting.fileNovalue" "-9999"
+        
+		
+		"writer_Qgw.file" "${home}/output/Posina_tree/Qgw_${ID}.csv"
+        "writer_Qgw.tStart" "${startDate}"
+        "writer_Qgw.tTimestep" 60
+		"writer_Qgw.fileNovalue" "-9999"
+        
+        
+        "writer_Qgw_mm.file" "${home}/output/Posina_tree/Qgw_mm_${ID}.csv"
+        "writer_Qgw_mm.tStart" "${startDate}"
+        "writer_Qgw_mm.tTimestep" 60
+        "writer_Qgw_mm.fileNovalue" "-9999"
+        
+        
+        "writer_Qro.file" "${home}/output/Posina_tree/Qro_${ID}.csv"
+        "writer_Qro.tStart" "${startDate}"
+        "writer_Qro.tTimestep" 60
+        "writer_Qro.fileNovalue" "-9999"
+        
+        "writer_Qro_mm.file" "${home}/output/Posina_tree/Qro_mm_${ID}.csv"
+        "writer_Qro_mm.tStart" "${startDate}"
+        "writer_Qro_mm.tTimestep" 60
+        "writer_Qro_mm.fileNovalue" "-9999"
+        
+        "writer_Qc.file" "${home}/output/Posina_tree/Qc_${ID}.csv"
+        "writer_Qc.tStart" "${startDate}"
+        "writer_Qc.tTimestep" 60
+        "writer_Qc.fileNovalue" "-9999"
+        
+        "writer_Throughfall.file" "${home}/output/Posina_tree/Throughfall_${ID}.csv"
+        "writer_Throughfall.tStart" "${startDate}"
+        "writer_Throughfall.tTimestep" 60
+        "writer_Throughfall.fileNovalue" "-9999"
+        
+        "writer_Qrz.file" "${home}/output/Posina_tree/Qrz_${ID}.csv"
+        "writer_Qrz.tStart" "${startDate}"
+        "writer_Qrz.tTimestep" 60
+        "writer_Qrz.fileNovalue" "-9999"
+        
+        
+        "writer_Sgw.file" "${home}/output/Posina_tree/Sgw_${ID}.csv"
+        "writer_Sgw.tStart" "${startDate}"
+        "writer_Sgw.tTimestep" 60
+        "writer_Sgw.fileNovalue" "-9999"
+        
+        
+        "writer_Sro.file" "${home}/output/Posina_tree/Sro_${ID}.csv"
+        "writer_Sro.tStart" "${startDate}"
+        "writer_Sro.tTimestep" 60
+        "writer_Sro.fileNovalue" "-9999"
+        
+        "writer_Sc.file" "${home}/output/Posina_tree/Sc_${ID}.csv"
+        "writer_Sc.tStart" "${startDate}"
+        "writer_Sc.tTimestep" 60
+        "writer_Sc.fileNovalue" "-9999"
+        
+        "writer_Sc_in.file" "${home}/output/Posina_tree/Sc_in_${ID}.csv"
+        "writer_Sc_in.tStart" "${startDate}"
+        "writer_Sc_in.tTimestep" 60
+        "writer_Sc_in.fileNovalue" "-9999"
+        
+        "writer_Srz.file" "${home}/output/Posina_tree/Srz_${ID}.csv"
+        "writer_Srz.tStart" "${startDate}"
+        "writer_Srz.tTimestep" 60
+        "writer_Srz.fileNovalue" "-9999"
+        
+        
+                
+        "writer_ETro.file" "${home}/output/Posina_tree/ETro_${ID}.csv"
+        "writer_ETro.tStart" "${startDate}"
+        "writer_ETro.tTimestep" 60
+        "writer_ETro.fileNovalue" "-9999"
+        
+        "writer_ETc.file" "${home}/output/Posina_tree/ETc_${ID}.csv"
+        "writer_ETc.tStart" "${startDate}"
+        "writer_ETc.tTimestep" 60
+        "writer_ETc.fileNovalue" "-9999"
+        
+        "writer_ETc_in.file" "${home}/output/Posina_tree/ETc_in_${ID}.csv"
+        "writer_ETc_in.tStart" "${startDate}"
+        "writer_ETc_in.tTimestep" 60
+        "writer_ETc_in.fileNovalue" "-9999"
+        
+        "writer_ETrz.file" "${home}/output/Posina_tree/ETrz_${ID}.csv"
+        "writer_ETrz.tStart" "${startDate}"
+        "writer_ETrz.tTimestep" 60
+        "writer_ETrz.fileNovalue" "-9999"
+        
+        "writer_InputRoot.file" "${home}/output/Posina_tree/InputRoot_${ID}.csv"
+		"writer_InputRoot.tStart" "${startDate}"
+        "writer_InputRoot.tTimestep" 60
+        "writer_InputRoot.fileNovalue" "-9999"
+        
+        "writer_InputRunoff.file" "${home}/output/Posina_tree/InputRunoff_${ID}.csv"
+		"writer_InputRunoff.tStart" "${startDate}"
+        "writer_InputRunoff.tTimestep" 60
+        "writer_InputRunoff.fileNovalue" "-9999"
+        
+        "writer_InputCanopyOut.file" "${home}/output/Posina_tree/InputCanopyOut_${ID}.csv"
+		"writer_InputCanopyOut.tStart" "${startDate}"
+        "writer_InputCanopyOut.tTimestep" 60
+        "writer_InputCanopyOut.fileNovalue" "-9999"
+        
+        "writer_uptake.file" "${home}/output/Posina_tree/uptake_${ID}.csv"
+		"writer_uptake.tStart" "${startDate}"
+        "writer_uptake.tTimestep" 60
+        "writer_uptake.fileNovalue" "-9999"
+		
+		
+   
+        
+   }
+   connect {
+   	
+   
+        "reader_data_rain.outData"                 "snow.inRainfallValues"
+        "reader_data_snow.outData"                 "snow.inSnowfallValues"
+        "reader_data_temp.outData"                  "snow.inTemperatureValues"
+        "reader_data_SWRB.outData"                  "snow.inShortwaveRadiationValues"
+         "reader_dem.outRaster"                   "snow.inDem"
+        "reader_sky.outRaster"                     "snow.inSkyview"
+        "vreader_station.geodata"                   "snow.inStations"
+
+   
+   	
+   	   	 "snow.outMeltingDischargeHM"             		 "waterBudgetCanopyOUT.inHMRain"   	    
+   	    //"reader_data_rain.outData"						"waterBudgetCanopyOUT.inHMRain"
+   	    
+        "reader_data_ET.outData"           				 "waterBudgetCanopyOUT.inHMETp"
+        "reader_data_LAI.outData"			 			 "waterBudgetCanopyOUT.inHMLAI"
+        
+     
+       "waterBudgetCanopyOUT.outHMThroughfall"            "waterBudgetRunoff.inRainValues"
+       //"snow.outMeltingDischargeHM"           				 "waterBudgetRunoff.inRainValues"       
+       //"reader_data_rain.outData"							"waterBudgetRunoff.inRainValues"
+        "reader_data_ET.outData"           				 "waterBudgetRunoff.inHMETp"
+        
+          
+       
+        "waterBudgetCanopyOUT.outHMThroughfall"            "waterBudgetRZ.inHMRain"
+       //"snow.outMeltingDischargeHM"						"waterBudgetRZ.inHMRain"
+       //"reader_data_rain.outData"						"waterBudgetRZ.inHMRain"
+        "reader_data_ET.outData"           				 "waterBudgetRZ.inHMETp"
+        
+        "waterBudgetRZ.outHMRootUpTake"     			 "waterBudgetCanopyIN.inHMRootUpTake"
+        "reader_data_ET.outData"           				 "waterBudgetCanopyIN.inHMETp"
+        "reader_data_LAI.outData"			 			 "waterBudgetCanopyIN.inHMLAI"
+        
+        
+        
+        
+        "reader_width.outRaster"                 		"waterBudgetRunoff.inRescaledDistance"
+        "reader_topIndex.outRaster" 					"waterBudgetRunoff.inTopindex"
+        
+
+        
+        "waterBudgetRZ.alpha"						"waterBudgetRunoff.alpha"    		
+     
+         "waterBudgetRZ.outHMR"			"waterBudgetGW.inHMRechargeValues"
+        
+        "waterBudgetRunoff.outHMDischarge"			"sum.inHMDischarge"            
+        "waterBudgetGW.outHMDischarge"             "sum.inHMDischarge2"
+        
+ 		  "snow.outMeltingDischargeHM" 				    "writer_Melting.inData"
+         "waterBudgetRunoff.outHMDischarge" 			"writer_Qro.inData"
+         "waterBudgetRunoff.outHMDischarge_mm"			"writer_Qro_mm.inData"
+         "waterBudgetGW.outHMDischarge" 				"writer_Qgw.inData"
+         "waterBudgetGW.outHMDischarge_mm"				"writer_Qgw_mm.inData"
+         
+         "waterBudgetRZ.outHMR" 						"writer_Qrz.inData"
+         "waterBudgetCanopyOUT.outHMThroughfall" 		"writer_Throughfall.inData"
+         "waterBudgetCanopyOUT.outHMActualOutput" 		"writer_Qc.inData"
+         
+         
+          "waterBudgetRunoff.outHMStorage" 			"writer_Sro.inData"
+         "waterBudgetGW.outHMStorage" 				"writer_Sgw.inData"
+         "waterBudgetRZ.outHMStorage" 			    "writer_Srz.inData"
+         "waterBudgetCanopyOUT.outHMStorage" 			"writer_Sc.inData"
+         "waterBudgetCanopyIN.outHMStorage" 			"writer_Sc_in.inData"
+         
+          "waterBudgetRunoff.outHMET" 					"writer_ETro.inData"
+         "waterBudgetRZ.outHMEvaporation" 			    "writer_ETrz.inData"
+         "waterBudgetCanopyOUT.outHMAET" 			 "writer_ETc.inData"
+         "waterBudgetCanopyIN.outHMAET" 			 "writer_ETc_in.inData"
+         
+        "waterBudgetRZ.outHMActualInput"			    "writer_InputRoot.inData"
+        "waterBudgetRunoff.outHMActualInput"			"writer_InputRunoff.inData"
+        
+        "waterBudgetCanopyOUT.outHMActualInput"        "writer_InputCanopyOut.inData"
+        
+        
+        "waterBudgetRZ.outHMRootUpTake"              "writer_uptake.inData"
+        
+        
+        // somma spaziale
+        "sum.outHMQtot"						 "to.in"
+        
+         //"waterBudgetRunoff.outHMDischarge"						  "writer_Qtot.inData"
+
+   }
+ }
+}
+
+
